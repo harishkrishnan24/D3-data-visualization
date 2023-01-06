@@ -16,9 +16,9 @@ async function drawLineChart() {
       left: 60,
     },
   };
-  dimensions.boundWidth =
+  dimensions.boundedWidth =
     dimensions.width - dimensions.margin.left - dimensions.margin.right;
-  dimensions.boundHeight =
+  dimensions.boundedHeight =
     dimensions.height - dimensions.margin.top - dimensions.margin.bottom;
 
   const wrapper = d3
@@ -33,6 +33,25 @@ async function drawLineChart() {
       "transform",
       `translate(${dimensions.margin.left}px, ${dimensions.margin.top}px)`
     );
+
+  const yScale = d3
+    .scaleLinear()
+    .domain(d3.extent(dataset, yAccessor))
+    .range([dimensions.boundedHeight, 0]);
+
+  const xScale = d3
+    .scaleTime()
+    .domain(d3.extent(dataset, xAccessor))
+    .range([0, dimensions.boundedWidth]);
+
+  const freezingTemperaturePlacement = yScale(32);
+  const freezingTemperatures = bounds
+    .append("rect")
+    .attr("x", 0)
+    .attr("width", dimensions.boundedWidth)
+    .attr("y", freezingTemperaturePlacement)
+    .attr("height", dimensions.boundedHeight - freezingTemperaturePlacement)
+    .attr("fill", "#e0f3f3");
 }
 
 drawLineChart();
